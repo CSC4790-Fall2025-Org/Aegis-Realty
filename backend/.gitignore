@@ -1,3 +1,4 @@
 env
 .env
+app/__pycache__/
 aegis-realty-1d2a7-firebase-adminsdk-fbsvc-6944c3770c.json
