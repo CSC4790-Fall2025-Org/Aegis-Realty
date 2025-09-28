@@ -24,6 +24,29 @@ def create_user(db: Session, user_data: UserRegistration, firebase_uid: str, dis
     db.refresh(db_user)
     return db_user
 
+def delete_user(db: Session, user_id: int) -> bool:
+    user = get_user_by_id(db, user_id)
+    if user:
+        db.delete(user)
+        db.commit()
+        return True
+    return False
+
+def update_user(db: Session, user_id: int, **kwargs) -> Optional[User]:
+    """
+    Update user fields by user_id. Pass fields to update as keyword arguments.
+    Returns the updated user or None if not found.
+    """
+    user = get_user_by_id(db, user_id)
+    if user:
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+        db.commit()
+        db.refresh(user)
+        return user
+    return None
+    
 def update_user_approval(db: Session, user_id: int, is_approved: bool) -> Optional[User]:
     user = get_user_by_id(db, user_id)
     if user:
@@ -31,3 +54,5 @@ def update_user_approval(db: Session, user_id: int, is_approved: bool) -> Option
         db.commit()
         db.refresh(user)
     return user
+
+
