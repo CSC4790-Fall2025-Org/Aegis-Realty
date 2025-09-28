@@ -1,5 +1,4 @@
-
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from pydantic import BaseModel
 
 class MailingAddress(BaseModel):
@@ -124,3 +123,16 @@ class PropertyRecord(BaseModel):
     history: Optional[Dict[str, SaleHistory]]
     owner: Optional[Owner]
     ownerOccupied: Optional[bool]
+
+class PropertyAnalysisRequest(BaseModel):
+    address: str
+    calculation_mode: Optional[str] = "gross"
+    cap_rate_threshold: Optional[float] = 8.0
+    custom_expenses: Optional[Dict[str, float]] = None
+
+class PropertyAnalysisResponse(BaseModel):
+    property_data: PropertyRecord
+    financial_analysis: Dict[str, Any]
+    ai_analysis: Dict[str, Any]
+    success: bool
+    message: str

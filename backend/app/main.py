@@ -5,6 +5,7 @@ from firebase_admin import credentials
 from app.core.database import Base, engine
 from app.core.config import settings
 from app.core.firebase_utils import firebase_creds_path
+from app.api.property import router as property_router
 from app.api.user import router as user_router
 
 cred = credentials.Certificate(firebase_creds_path)
@@ -19,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(property_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 
 @app.on_event("startup")

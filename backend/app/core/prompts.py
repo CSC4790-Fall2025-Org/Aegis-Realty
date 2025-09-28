@@ -1,4 +1,4 @@
-def generate_investment_prompt(property_data, roi, cap_rate):
+def generate_investment_prompt(property_data, cap_rate):
     return f"""
     You are a real estate investment analyst. Your task is to provide a comprehensive analysis of a property based on the provided data.
 
@@ -6,12 +6,11 @@ def generate_investment_prompt(property_data, roi, cap_rate):
     {property_data}
 
     Key Metrics:
-    - Return on Investment (ROI): {roi}%
     - Capitalization Rate (Cap Rate): {cap_rate}%
 
     Instructions:
     1.  **Summary of the Property:** Provide a brief, professional summary of the property and its key features.
-    2.  **Investment Recommendation:** Based on the provided ROI and Cap Rate, give a clear decision on whether this is a good investment. Justify your decision with a short explanation.
+    2.  **Investment Recommendation:** Based on the provided Cap Rate, give a clear decision on whether this is a good investment. Justify your decision with a short explanation.
     3.  **Potential Risks:** Identify any potential risks or red flags that an investor should be aware of, based on the property data.
     4.  **Recommendations:** Offer a few recommendations on how an investor could improve the property's value or increase its rental income.
 
