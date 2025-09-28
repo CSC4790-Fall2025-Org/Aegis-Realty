@@ -9,8 +9,8 @@ genai.api_key = api_key
 
 client = genai.Client(api_key=api_key)
 
-def ai_investment_analysis(property_data, roi, cap_rate):
-    prompt = generate_investment_prompt(property_data, roi, cap_rate)
+def ai_investment_analysis(property_data, cap_rate):
+    prompt = generate_investment_prompt(property_data, cap_rate)
     res = client.models.generate_content(
         model="gemini-2.5-flash",
         config=types.GenerateContentConfig(
