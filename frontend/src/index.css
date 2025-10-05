@@ -1,21 +1,37 @@
 @import "tailwindcss";
 
 @theme {
+  --font: system-ui, Avenir, Helvetica, Arial, sans-serif;
   --color-background: var(--background);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
 }
 
-/*body {*/
-/*  @apply*/
-/*}*/
+body {
+  @apply bg-gradient-to-br from-primary/50  via-neutral-100 to-primary/50
+}
 
-/*.dark body {*/
-/*  @apply*/
-/*}*/
+.dark body {
+  @apply bg-gradient-to-br from-background via-neutral-100 to-background
+}
 
 :root {
-  --background: oklch(98.89% 0.004 286.33);
+  --background: oklab(100.00% 0.000 0.00);
+  --primary: oklab(56.70% -0.057 -0.14);
+  --secondary: oklab(81.80% -0.057 -0.06);
+  --accent: oklab(73.87% -0.008 -0.01);
+  --text: oklab(11.83% 0.008 -0.05);
+  --muted: oklch(10.11% 0.000 89.88);
 }
 
 .dark {
-  --background: oklch(98.89% 0.004 286.33);
+  --background: oklab(0.00% 0.000 0.00);
+  --primary: oklab(71.97% -0.070 -0.14);
+  --secondary: oklab(43.97% -0.051 -0.06);
+  --accent: oklab(44.70% -0.009 -0.01);
+  --text: oklab(94.04% 0.008 -0.02);
+  --muted: oklch(100% 0.000 89.88);
 }
