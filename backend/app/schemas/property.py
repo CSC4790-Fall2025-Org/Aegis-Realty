@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from datetime import date
 from typing import Any
 
-class PropertyRecord(BaseModel):
+class PropertyBase(BaseModel):
     id: int
     formatted_address: Optional[str] = Field(None, alias="formattedAddress")
     address_line1: Optional[str] = Field(None, alias="addressLine1")
@@ -29,7 +29,6 @@ class PropertyRecord(BaseModel):
     last_sale_price: Optional[float] = Field(None, alias="lastSalePrice")
     owner_occupied: Optional[bool] = Field(None, alias="ownerOccupied")
 
-    # JSON fields in SQLAlchemy 
     features: Optional[Dict[str, Any]] = None
     hoa: Optional[Dict[str, Any]] = None
     owners: Optional[Any] = None
@@ -42,6 +41,68 @@ class PropertyRecord(BaseModel):
         allow_population_by_field_name = True
         allow_population_by_alias = True
 
+class PropertyCreate(BaseModel):
+    formatted_address: str
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    state_fips: Optional[str] = None
+    zip_code: Optional[str] = None
+    county: Optional[str] = None
+    county_fips: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    property_type: Optional[str] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[float] = None
+    square_footage: Optional[int] = None
+    lot_size: Optional[int] = None
+    year_built: Optional[int] = None
+    assessor_id: Optional[str] = None
+    subdivision: Optional[str] = None
+    zoning: Optional[str] = None
+    last_sale_date: Optional[date] = None
+    last_sale_price: Optional[float] = None
+    owner_occupied: Optional[bool] = None
+    features: Optional[Dict[str, Any]] = None
+    hoa: Optional[Dict[str, Any]] = None
+    owners: Optional[Any] = None
+    tax_assessments: Optional[Dict[str, Any]] = None
+    property_taxes: Optional[Dict[str, Any]] = None
+    sale_history: Optional[Dict[str, Any]] = None
+
+class PropertyUpdate(BaseModel):
+    formatted_address: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    state_fips: Optional[str] = None
+    zip_code: Optional[str] = None
+    county: Optional[str] = None
+    county_fips: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    property_type: Optional[str] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[float] = None
+    square_footage: Optional[int] = None
+    lot_size: Optional[int] = None
+    year_built: Optional[int] = None
+    assessor_id: Optional[str] = None
+    subdivision: Optional[str] = None
+    zoning: Optional[str] = None
+    last_sale_date: Optional[date] = None
+    last_sale_price: Optional[float] = None
+    owner_occupied: Optional[bool] = None
+    features: Optional[Dict[str, Any]] = None
+    hoa: Optional[Dict[str, Any]] = None
+    owners: Optional[Any] = None
+    tax_assessments: Optional[Dict[str, Any]] = None
+    property_taxes: Optional[Dict[str, Any]] = None
+    sale_history: Optional[Dict[str, Any]] = None
+
 class PropertyAnalysisRequest(BaseModel):
     address: str
     calculation_mode: Optional[str] = "gross"  # 'gross' or 'net'
@@ -50,7 +111,7 @@ class PropertyAnalysisRequest(BaseModel):
 
 
 class PropertyAnalysisResponse(BaseModel):
-    property_data: Optional[PropertyRecord]
+    property_data: Optional[PropertyBase]
     financial_analysis: Optional[Dict[str, Any]]
     ai_analysis: Optional[Dict[str, Any]]
     success: bool = False

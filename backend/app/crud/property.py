@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.property import Property
-from app.schemas.property_schemas import PropertyCreate, PropertyUpdate
+from app.schemas.property import PropertyCreate, PropertyUpdate
 from typing import Optional, List
 
 def get_property_by_id(db: Session, property_id: int) -> Optional[Property]:
