@@ -10,7 +10,7 @@ def get_all_properties(db: Session) -> List[Property]:
     return db.query(Property).all()
 
 def create_property(db: Session, property_data: PropertyCreate) -> Property:
-    db_property = Property(**property_data.dict())
+    db_property = Property(**property_data.dict(by_alias=False, exclude_unset=True))
     db.add(db_property)
     db.commit()
     db.refresh(db_property)
@@ -19,7 +19,8 @@ def create_property(db: Session, property_data: PropertyCreate) -> Property:
 def update_property(db: Session, property_id: int, property_data: PropertyUpdate) -> Optional[Property]:
     property_obj = get_property_by_id(db, property_id)
     if property_obj:
-        for key, value in property_data.dict(exclude_unset=True).items():
+        update_data = property_data.dict(by_alias=False, exclude_unset=True)
+        for key, value in update_data.items():
             setattr(property_obj, key, value)
         db.commit()
         db.refresh(property_obj)

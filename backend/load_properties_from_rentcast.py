@@ -53,21 +53,21 @@ class RentCastPropertyLoader:
                         continue
 
                     # Check if property already exists
-                    existing = db.query(Property).filter(Property.address == address).first()
+                    existing = db.query(Property).filter(Property.formatted_address == address).first()
                     if existing:
                         skipped_count += 1
                         continue
 
                     # Create property record
                     property_obj = Property(
-                        address=address,
+                        formatted_address=address,
                         city=prop_data.get("city", ""),
                         state=prop_data.get("state", ""),
                         zip_code=prop_data.get("zipCode", ""),
-                        price=prop_data.get("lastSalePrice", 0.0),
+                        last_sale_price=prop_data.get("lastSalePrice", 0.0),
                         bedrooms=prop_data.get("bedrooms", 0),
                         bathrooms=prop_data.get("bathrooms", 0.0),
-                        square_feet=prop_data.get("squareFootage", 0),
+                        square_footage=prop_data.get("squareFootage", 0),
                         year_built=prop_data.get("yearBuilt", None)
                     )
 
@@ -142,20 +142,20 @@ class RentCastPropertyLoader:
                         skipped_count += 1
                         continue
 
-                    existing = db.query(Property).filter(Property.address == address).first()
+                    existing = db.query(Property).filter(Property.formatted_address == address).first()
                     if existing:
                         skipped_count += 1
                         continue
 
                     property_obj = Property(
-                        address=address,
+                        formatted_address=address,
                         city=prop_data.get("city", ""),
                         state=prop_data.get("state", ""),
                         zip_code=prop_data.get("zipCode", ""),
-                        price=prop_data.get("lastSalePrice", 0.0),
+                        last_sale_price=prop_data.get("lastSalePrice", 0.0),
                         bedrooms=prop_data.get("bedrooms", 0),
                         bathrooms=prop_data.get("bathrooms", 0.0),
-                        square_feet=prop_data.get("squareFootage", 0),
+                        square_footage=prop_data.get("squareFootage", 0),
                         year_built=prop_data.get("yearBuilt", None)
                     )
 

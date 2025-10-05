@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.schemas.property_schemas import PropertyRecord, PropertyAnalysisRequest, PropertyAnalysisResponse
+from app.schemas.property import PropertyRecord, PropertyAnalysisRequest, PropertyAnalysisResponse
 from app.models.property import Property
 from app.core.database import get_db
-from app.services.property_analysis import PropertyAnalyzer
-from app.services.ai_investment_analysis import ai_investment_analysis
+from app.utils.property_analysis import PropertyAnalyzer
+from app.utils.ai_investment_analysis import ai_investment_analysis
 from typing import List
 
 router = APIRouter(prefix="/properties", tags=["Properties"])
@@ -12,38 +12,14 @@ router = APIRouter(prefix="/properties", tags=["Properties"])
 @router.get("/", response_model=List[PropertyRecord])
 def read_properties(db: Session = Depends(get_db)):
     properties = db.query(Property).all()
-    return [PropertyRecord(
-        id=str(p.id),
-        formattedAddress=p.address,
-        addressLine1=p.address,
-        city=p.city,
-        state=p.state,
-        zipCode=p.zip_code,
-        bedrooms=p.bedrooms,
-        bathrooms=p.bathrooms,
-        squareFootage=p.square_feet,
-        yearBuilt=p.year_built,
-        lastSalePrice=p.price
-    ) for p in properties]
+    return [PropertyRecord.from_orm(p) for p in properties]
 
 @router.get("/{property_id}", response_model=PropertyRecord)
 def read_property(property_id: int, db: Session = Depends(get_db)):
     p = db.query(Property).filter(Property.id == property_id).first()
     if not p:
         raise HTTPException(status_code=404, detail="Property not found")
-    return PropertyRecord(
-        id=str(p.id),
-        formattedAddress=p.address,
-        addressLine1=p.address,
-        city=p.city,
-        state=p.state,
-        zipCode=p.zip_code,
-        bedrooms=p.bedrooms,
-        bathrooms=p.bathrooms,
-        squareFootage=p.square_feet,
-        yearBuilt=p.year_built,
-        lastSalePrice=p.price
-    )
+    return PropertyRecord.from_orm(p)
 
 @router.post("/analyze-property", response_model=PropertyAnalysisResponse)
 async def analyze_property_investment(
@@ -55,8 +31,9 @@ async def analyze_property_investment(
     """
     try:
         # Find property in database by address
+        # Search by formatted_address (ORM field) rather than legacy 'address'
         property_obj = db.query(Property).filter(
-            Property.address.ilike(f"%{request.address}%")
+            Property.formatted_address.ilike(f"%{request.address}%")
         ).first()
 
         if not property_obj:
@@ -65,25 +42,13 @@ async def analyze_property_investment(
                 detail=f"Property not found for address: {request.address}"
             )
 
-        # Convert to PropertyRecord format
-        property_record = PropertyRecord(
-            id=str(property_obj.id),
-            formattedAddress=property_obj.address,
-            addressLine1=property_obj.address,
-            city=property_obj.city,
-            state=property_obj.state,
-            zipCode=property_obj.zip_code,
-            bedrooms=property_obj.bedrooms,
-            bathrooms=property_obj.bathrooms,
-            squareFootage=property_obj.square_feet,
-            yearBuilt=property_obj.year_built,
-            lastSalePrice=property_obj.price
-        )
+       
+        property_record = PropertyRecord.from_orm(property_obj)
 
         # Run financial analysis
         analyzer = PropertyAnalyzer()
         financial_analysis = analyzer.analyze_property(
-            property_data=property_record.dict(),
+            property_data=property_record.dict(by_alias=True),
             calculation_mode=request.calculation_mode,
             custom_expenses=request.custom_expenses,
             cap_rate_threshold=request.cap_rate_threshold
@@ -94,7 +59,7 @@ async def analyze_property_investment(
         roi = cap_rate  # Using cap rate as ROI proxy
 
         ai_analysis = ai_investment_analysis(
-            property_data=property_record.dict(),
+            property_data=property_record.dict(by_alias=True),
             roi=roi,
             cap_rate=cap_rate
         )
@@ -132,7 +97,7 @@ async def analyze_property_by_id(
             raise HTTPException(status_code=404, detail="Property not found")
 
         request = PropertyAnalysisRequest(
-            address=property_obj.address,
+            address=property_obj.formatted_address,
             calculation_mode=calculation_mode,
             cap_rate_threshold=cap_rate_threshold
         )
@@ -144,3 +109,6 @@ async def analyze_property_by_id(
             status_code=500,
             detail=f"Analysis failed: {str(e)}"
         )
+    
+
+    #RUN CHAT WITH SWAGGERDOCS PUSH AND POST REQS 

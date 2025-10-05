@@ -1,6 +1,6 @@
-
 # Analysis report schemas for property stuff
-# Written for class project, not by AI
+# Written for class project, not by AI (Stack Overflow References - >
+# https://stackoverflow.com/questions/76767267/pydantic-create-nested-structure-from-single-object
 
 from typing import Optional, Dict
 from pydantic import BaseModel

@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, Tuple
-from .rentcast_client import RentCastClient
+from app.services.rentcast_client import RentCastClient
 from .rent_estimation import RentEstimator
 
 
