@@ -60,6 +60,7 @@ class PropertyCreate(BaseModel):
     lot_size: Optional[int] = None
     year_built: Optional[int] = None
     assessor_id: Optional[str] = None
+    legal_description: Optional[str] = None
     subdivision: Optional[str] = None
     zoning: Optional[str] = None
     last_sale_date: Optional[date] = None
@@ -92,6 +93,7 @@ class PropertyUpdate(BaseModel):
     year_built: Optional[int] = None
     assessor_id: Optional[str] = None
     subdivision: Optional[str] = None
+    legal_description: Optional[str] = None
     zoning: Optional[str] = None
     last_sale_date: Optional[date] = None
     last_sale_price: Optional[float] = None

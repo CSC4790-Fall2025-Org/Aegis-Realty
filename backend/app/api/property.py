@@ -28,28 +28,21 @@ def get_properties(
     bedrooms: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
-    """Get properties with optional filtering and pagination"""
-    query = db.query(Property)
-
-    if city:
-        query = query.filter(Property.city.ilike(f"%{city}%"))
-    if state:
-        query = query.filter(Property.state.ilike(f"%{state}%"))
-    if property_type:
-        query = query.filter(Property.property_type.ilike(f"%{property_type}%"))
-    if min_price:
-        query = query.filter(Property.last_sale_price >= min_price)
-    if max_price:
-        query = query.filter(Property.last_sale_price <= max_price)
-    if bedrooms:
-        query = query.filter(Property.bedrooms == bedrooms)
-
-    properties = query.offset(skip).limit(limit).all()
+    properties = get_properties_filtered(
+        db=db,
+        skip=skip,
+        limit=limit,
+        city=city,
+        state=state,
+        property_type=property_type,
+        min_price=min_price,
+        max_price=max_price,
+        bedrooms=bedrooms
+    )
     return [PropertyBase.from_orm(p) for p in properties]
 
 @router.get("/{property_id}", response_model=PropertyBase)
 def get_property(property_id: int, db: Session = Depends(get_db)):
-    """Get a specific property by ID"""
     property_obj = get_property_by_id(db, property_id)
     if not property_obj:
         raise HTTPException(status_code=404, detail="Property not found")
