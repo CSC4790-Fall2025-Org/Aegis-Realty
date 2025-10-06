@@ -14,7 +14,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
           >
             <img
               src={AegisLogo}
