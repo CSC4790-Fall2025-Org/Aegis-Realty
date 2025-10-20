@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 export const apiClient = axios.create({
@@ -28,7 +27,6 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
       console.error('Unauthorized access');
     }
     return Promise.reject(error);

@@ -18,6 +18,13 @@ body {
   @apply bg-gradient-to-br from-background via-neutral-100 to-background
 }
 
+input,
+textarea,
+select {
+  color: var(--text);
+  background-color: var(--secondary);
+}
+
 :root {
   --background: oklab(100.00% 0.000 0.00);
   --primary: oklab(56.70% -0.057 -0.14);

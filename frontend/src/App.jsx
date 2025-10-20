@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
+import AuthForm from './containers/AuthForm.jsx';
+import Error from "./pages/Error.jsx"
 import Footer from "./components/layout/Footer.jsx";
 import Header from "./components/layout/Header.jsx";
 import Home from "./pages/Home.jsx"
@@ -10,11 +12,14 @@ const App = () => {
       <Header/>
       <main>
         <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/properties" element={<Properties/>}/>
-          <Route path="/services" element={<div>Services Page</div>} />
-          <Route path="/contact" element={<div>Contact Page</div>} />
-          <Route path="/about" element={<div>About Page</div>} />
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<AuthForm mode="login"/>}/>
+            <Route path="/signup" element={<AuthForm mode="signup"/>}/>
+            <Route path="/properties" element={<Properties/>}/>
+            <Route path="/services" element={<div>Services Page</div>} />
+            <Route path="/contact" element={<div>Contact Page</div>} />
+            <Route path="/about" element={<div>About Page</div>} />
+            <Route path="*" element={<Error/>}/>
         </Routes>
       </main>
       <Footer/>

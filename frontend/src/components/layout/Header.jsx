@@ -1,12 +1,36 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../contexts/ToastContext.jsx";
+import ThemeToggle from "../ThemeToggle.jsx"
+import { useAuth } from "../../contexts/AuthContext.jsx";
+import { getAuth } from 'firebase/auth';
+import { app } from '../services/firebase';
 import { FiMenu, FiX, FiUser, FiLogIn, FiLogOut } from 'react-icons/fi';
 import AegisLogo from "../../assets/images/Aegis_Realty_Logo_Transparent.png";
 
+const auth = getAuth(app);
+
 const Header = () => {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
+  };
+
+  const handleLogout = () => {
+    auth.signOut();
+    navigate('/login');
+    toast.success("You've been logged out.");
+    setShowLogoutConfirm(false);
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
