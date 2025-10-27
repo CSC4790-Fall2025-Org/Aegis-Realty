@@ -1,10 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { app } from '../services/firebase';
-import { useUserByFirebaseId } from '../hooks/useUserQueries';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../services/firebase';
+import { useUserByFirebaseId } from '../hooks/useUserQueries.js'
 import { useToast } from './ToastContext';
-
-const auth = getAuth(app);
 
 export const AuthContext = createContext(null);
 

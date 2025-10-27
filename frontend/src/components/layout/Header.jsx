@@ -1,113 +1,82 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { signOut } from 'firebase/auth';
+import { FiMenu, FiX } from 'react-icons/fi';
 import { useToast } from "../../contexts/ToastContext.jsx";
-import ThemeToggle from "../ThemeToggle.jsx"
 import { useAuth } from "../../contexts/AuthContext.jsx";
-import { getAuth } from 'firebase/auth';
-import { app } from '../services/firebase';
-import { FiMenu, FiX, FiUser, FiLogIn, FiLogOut } from 'react-icons/fi';
-import AegisLogo from "../../assets/images/Aegis_Realty_Logo_Transparent.png";
-
-const auth = getAuth(app);
+import { auth } from '../../services/firebase.js';
+import ThemeToggle from "../ThemeToggle";
+import Logo from "../header/Logo";
+import DesktopNav from "../header/DesktopNav";
+import AuthButtons from "../header/AuthButtons";
+import MobileMenu from "../header/MobileMenu";
+import LogoutModal from "../header/LogoutModal";
 
 const Header = () => {
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+  const { currentUser, isAuthenticated } = useAuth();
 
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    setIsMenuOpen(false);
   };
 
-  const cancelLogout = () => {
-    setShowLogoutConfirm(false);
-  };
-
-  const handleLogout = () => {
-    auth.signOut();
-    navigate('/login');
-    toast.success("You've been logged out.");
-    setShowLogoutConfirm(false);
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast.success('Successfully logged out');
+      navigate('/');
+      setShowLogoutModal(false);
+    } catch (error) {
+      toast.error('Error logging out');
+    }
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
-          >
-            <img
-              src={AegisLogo}
-              alt="Aegis Realty Logo"
-              className="h-10 w-auto"
+    <header className="bg-secondary shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <Logo onClick={() => navigate('/')} />
+
+          <DesktopNav onNavigate={navigate} />
+
+          <div className="hidden md:flex items-center space-x-4">
+            <AuthButtons
+              isAuthenticated={isAuthenticated}
+              currentUser={currentUser}
+              onDashboard={() => navigate('/dashboard')}
+              onLogout={() => setShowLogoutModal(true)}
+              onLogin={() => navigate('/login')}
             />
-            <span className="text-xl font-bold text-text">Aegis Realty</span>
+            <ThemeToggle />
+          </div>
+
+          <button onClick={toggleMenu} className="md:hidden text-text cursor-pointer">
+            {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
-
-          <div className="hidden md:flex items-center space-x-8">
-            <nav className="flex space-x-8">
-              <button onClick={() => navigate("/properties")} className="text-text hover:text-primary transition-colors cursor-pointer">Properties</button>
-              <button onClick={() => navigate("/services")} className="text-text hover:text-primary transition-colors cursor-pointer">Services</button>
-              <button onClick={() => navigate("/contact")} className="text-text hover:text-primary transition-colors cursor-pointer">Contact</button>
-            </nav>
-
-            <div className="relative">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-1 text-text hover:text-primary transition-colors cursor-pointer"
-              >
-                <FiUser className="w-5 h-5" />
-                <span>Account</span>
-              </button>
-
-              {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                  <button onClick={() => navigate("/login")} className="flex items-center px-4 py-2 text-sm text-text hover:bg-gray-100 w-full text-left cursor-pointer">
-                    <FiLogIn className="w-4 h-4 mr-2" />
-                    Login
-                  </button>
-                  <button onClick={() => navigate("/profile")} className="flex items-center px-4 py-2 text-sm text-text hover:bg-gray-100 w-full text-left cursor-pointer">
-                    <FiUser className="w-4 h-4 mr-2" />
-                    Profile
-                  </button>
-                  <button onClick={() => navigate("/logout")} className="flex items-center px-4 py-2 text-sm text-text hover:bg-gray-100 w-full text-left cursor-pointer">
-                    <FiLogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-text hover:text-primary"
-            >
-              {isMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-            </button>
-          </div>
         </div>
 
-        {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <button onClick={() => navigate("/properties")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Properties</button>
-              <button onClick={() => navigate("/services")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Services</button>
-              <button onClick={() => navigate("/contact")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Contact</button>
-              <div className="border-t border-gray-200 pt-2">
-                <button onClick={() => navigate("/login")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Login</button>
-                <button onClick={() => navigate("/profile")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Profile</button>
-                <button onClick={() => navigate("/logout")} className="block px-3 py-2 text-text hover:text-primary w-full text-left">Logout</button>
-              </div>
-            </div>
-          </div>
-        )}
+        <MobileMenu
+          isOpen={isMenuOpen}
+          isAuthenticated={isAuthenticated}
+          currentUser={currentUser}
+          onNavigate={handleNavigate}
+          onDashboard={() => handleNavigate('/dashboard')}
+          onLogout={() => { setShowLogoutModal(true); setIsMenuOpen(false); }}
+          onLogin={() => handleNavigate('/login')}
+        />
       </div>
+
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </header>
   );
 };

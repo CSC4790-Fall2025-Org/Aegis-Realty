@@ -1,19 +1,17 @@
 import { useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import { app } from '../services/firebase';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../services/firebase.js'
 import { getUserByFirebaseId, createUser } from '../services/userServices';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
-import { useToast } from "../context/ToastContext.jsx"
+import { useToast } from "../contexts/ToastContext.jsx"
 import { useScrollToTop } from "../hooks/useScrollToTop.js";
 import { FcGoogle } from 'react-icons/fc';
 
-const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 const AuthForm = ({ mode = 'login' }) => {
