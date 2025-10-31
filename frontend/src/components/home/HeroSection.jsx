@@ -12,7 +12,7 @@ const HeroSection = () => {
 
           <p className="text-xl text-muted max-w-3xl mx-auto mb-8">
             Leverage AI-powered insights and comprehensive analysis to make smarter property investment decisions.
-            From instant cash flow projections to automated property management - all in one platform.
+            From instant cash flow projections to automated property management - all in one platform
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -30,7 +30,7 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-lg p-6 max-w-md mx-auto">
+          <div className="bg-background backdrop-blur-sm rounded-lg shadow-lg p-6 max-w-md mx-auto">
             <h3 className="text-lg font-semibold text-text mb-4">Start Your Analysis</h3>
             <input
               type="text"

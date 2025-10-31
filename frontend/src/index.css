@@ -15,7 +15,7 @@ body {
 }
 
 .dark body {
-  @apply bg-gradient-to-br from-background via-neutral-100 to-background
+  @apply bg-gradient-to-br from-background via-primary/40 to-background
 }
 
 input,
@@ -26,19 +26,19 @@ select {
 }
 
 :root {
-  --background: oklab(100.00% 0.000 0.00);
-  --primary: oklab(56.70% -0.057 -0.14);
-  --secondary: oklab(81.80% -0.057 -0.06);
-  --accent: oklab(73.87% -0.008 -0.01);
-  --text: oklab(11.83% 0.008 -0.05);
+  --background: oklch(100.00% 0.000 89.88);
+  --primary: oklch(56.70% 0.155 248.52);
+  --secondary: oklch(81.80% 0.080 225.19);
+  --accent: oklch(73.87% 0.015 238.09);
+  --text: oklch(11.83% 0.046 280.65);
   --muted: oklch(10.11% 0.000 89.88);
 }
 
 .dark {
-  --background: oklab(0.00% 0.000 0.00);
-  --primary: oklab(71.97% -0.070 -0.14);
-  --secondary: oklab(43.97% -0.051 -0.06);
-  --accent: oklab(44.70% -0.009 -0.01);
-  --text: oklab(94.04% 0.008 -0.02);
-  --muted: oklch(100% 0.000 89.88);
+  --background: oklch(0.00% 0.000 0);
+  --primary: oklch(71.97% 0.156 243.43);
+  --secondary: oklch(56.70% 0.155 248.52);
+  --accent: oklch(44.70% 0.013 228.40);
+  --text: oklch(100% 0.000 89.88);
+  --muted: oklch(94.04% 0.022 291.80);
 }

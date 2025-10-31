@@ -5,7 +5,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-text text-white">
+    <footer className="bg-secondary text-text">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -22,7 +22,7 @@ const Footer = () => {
                 <span className="text-xl font-bold">Aegis Realty</span>
               </button>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="text-text mb-4">
               Empowering real estate investors with AI-driven insights and comprehensive property management solutions.
             </p>
           </div>
@@ -33,7 +33,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/properties")}
-                  className="text-gray-300 hover:text-white transition-colors text-left cursor-pointer"
+                  className="text-text hover:text-white transition-colors text-left cursor-pointer"
                 >
                   Properties
                 </button>
@@ -41,7 +41,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/services")}
-                  className="text-gray-300 hover:text-white transition-colors text-left cursor-pointer"
+                  className="text-text hover:text-white transition-colors text-left cursor-pointer"
                 >
                   Services
                 </button>
@@ -49,7 +49,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/contact")}
-                  className="text-gray-300 hover:text-white transition-colors text-left cursor-pointer"
+                  className="text-text hover:text-white transition-colors text-left cursor-pointer"
                 >
                   Contact
                 </button>
@@ -57,7 +57,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => navigate("/about")}
-                  className="text-gray-300 hover:text-white transition-colors text-left cursor-pointer"
+                  className="text-text hover:text-white transition-colors text-left cursor-pointer"
                 >
                   About Us
                 </button>
@@ -67,7 +67,7 @@ const Footer = () => {
 
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
-            <div className="space-y-2 text-gray-300">
+            <div className="space-y-2 text-text">
               <p>Email: info@aegisrealty.com</p>
               <p>Phone: (555) 123-4567</p>
               <p>Address: 123 Real Estate Ave<br />Suite 100, City, State 12345</p>
@@ -75,7 +75,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+        <div className="border-t border-gray-700 mt-8 pt-8 text-center text-text">
           <p>&copy; 2025 Aegis Realty. All rights reserved.</p>
         </div>
       </div>
