@@ -132,133 +132,135 @@ const AuthForm = ({ mode = 'login' }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="bg-secondary p-8 rounded-lg shadow-md max-w-md w-full mx-auto">
-        <h2 className="text-2xl font-bold text-text mb-6 text-center">
-          {isLogin ? 'Login to Your Account' : 'Create a New Account'}
-        </h2>
+    <div className="flex items-center justify-center h-full">
+      <div className="container mx-auto px-4 py-16">
+        <div className="bg-secondary p-8 rounded-lg shadow-md max-w-md w-full mx-auto">
+          <h2 className="text-2xl font-bold text-text mb-6 text-center">
+            {isLogin ? 'Login to Your Account' : 'Create a New Account'}
+          </h2>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-text mb-1">
+                  Username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required={!isLogin}
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            )}
+
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-text mb-1">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-text mb-1">
+                Email Address
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
-                required={!isLogin}
-                value={formData.username}
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-          )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-text mb-1">
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-text mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
-          {!isLogin && (
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-1">
-                Confirm Password
+              <label htmlFor="password" className="block text-sm font-medium text-text mb-1">
+                Password
               </label>
               <input
-                id="confirmPassword"
-                name="confirmPassword"
+                id="password"
+                name="password"
                 type="password"
-                required={!isLogin}
-                value={formData.confirmPassword}
+                required
+                value={formData.password}
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="
-            w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-opacity-90
-            transition-colors disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
-          </button>
-        </form>
+            {!isLogin && (
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-1">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required={!isLogin}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-background border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            )}
 
-        <div className="mt-4">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+              w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-opacity-90
+              transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              {loading ? 'Processing...' : isLogin ? 'Login' : 'Sign Up'}
+            </button>
+          </form>
+
+          <div className="mt-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-secondary text-text">Or continue with</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-secondary text-text">Or continue with</span>
-            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="
+              mt-4 w-full flex items-center justify-center gap-2 bg-white text-gray-800 py-2 px-4
+              border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              <FcGoogle size={18} />
+              {isLogin ? 'Sign in with Google' : 'Sign up with Google'}
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="
-            mt-4 w-full flex items-center justify-center gap-2 bg-white text-gray-800 py-2 px-4
-            border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer"
-          >
-            <FcGoogle size={18} />
-            {isLogin ? 'Sign in with Google' : 'Sign up with Google'}
-          </button>
-        </div>
-
-        <div className="mt-6 text-center text-sm text-text">
-          {isLogin ? (
-            <>
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-primary hover:underline">
-                Sign up
-              </Link>
-            </>
-          ) : (
-            <>
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline">
-                Login
-              </Link>
-            </>
-          )}
+          <div className="mt-6 text-center text-sm text-text">
+            {isLogin ? (
+              <>
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up
+                </Link>
+              </>
+            ) : (
+              <>
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary hover:underline">
+                  Login
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
