@@ -7,8 +7,7 @@ class UserBase(BaseModel):
     display_name: Optional[str] = None
 
 class UserCreate(UserBase):
-    """Schema for creating a new user"""
-    firebase_uid: str
+    firebase_id: str
 
 class UserUpdate(BaseModel):
     display_name: Optional[str] = None
@@ -16,7 +15,7 @@ class UserUpdate(BaseModel):
 
 class UserResponse(BaseModel):
     id: int
-    firebase_uid: str
+    firebase_id: str
     is_approved: bool
     created_at: datetime
 

@@ -28,10 +28,3 @@ def get_current_user(required: bool = REQUIRE_AUTH):
             return None
 
     return auth_dependency
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()

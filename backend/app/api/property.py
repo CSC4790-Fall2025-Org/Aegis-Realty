@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.core.dependencies import get_db
+from app.core import get_db
 from app.schemas.property import PropertyBase, PropertyCreate, PropertyUpdate, PropertyAnalysisRequest, \
     PropertyAnalysisResponse
 from app.crud.property import (
@@ -15,7 +15,6 @@ from app.utils.property_analysis import PropertyAnalyzer
 from app.utils.ai_investment_analysis import ai_investment_analysis
 
 router = APIRouter(prefix="/properties", tags=["Properties"])
-
 
 @router.get("/", response_model=List[PropertyBase])
 def get_properties(

@@ -3,8 +3,8 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 from typing import Optional
 
-def get_user_by_firebase_uid(db: Session, firebase_uid: str) -> Optional[User]:
-    return db.query(User).filter(User.firebase_uid == firebase_uid).first()
+def get_user_by_firebase_id(db: Session, firebase_id: str) -> Optional[User]:
+    return db.query(User).filter(User.firebase_id == firebase_id).first()
 
 def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
@@ -12,9 +12,9 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
 def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.id == user_id).first()
 
-def create_user(db: Session, user_data: UserCreate, firebase_uid: str, display_name: str = None) -> User:
+def create_user(db: Session, user_data: UserCreate, firebase_id: str, display_name: str = None) -> User:
     db_user = User(
-        firebase_uid=firebase_uid,
+        firebase_id=firebase_id,
         email=user_data.email,
         display_name=user_data.display_name or display_name,
         is_approved=False
@@ -33,10 +33,6 @@ def delete_user(db: Session, user_id: int) -> bool:
     return False
 
 def update_user(db: Session, user_id: int, **kwargs) -> Optional[User]:
-    """
-    Update user fields by user_id. Pass fields to update as keyword arguments.
-    Returns the updated user or None if not found.
-    """
     user = get_user_by_id(db, user_id)
     if user:
         for key, value in kwargs.items():
