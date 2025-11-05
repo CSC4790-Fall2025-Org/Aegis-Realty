@@ -36,21 +36,21 @@ export const onAuthChange = (callback) => {
 export const getCurrentIdToken = async () => {
   const user = auth.currentUser;
   if (!user) return null;
-  return getIdToken(user, /* forceRefresh */ false);
+  return getIdToken(user, false);
 };
 
 export const sendIdTokenToBackend = async (idToken) => {
-  // If configured to skip backend during development, just log the token and return a stub response
+    /*developmnet */
   if (SKIP_BACKEND) {
     try {
       const short = idToken ? `${idToken.slice(0, 40)}...` : null;
-      console.log('Skipping backend send; ID token (truncated):', short);
+      console.log('skip backend send; ID token truncated:', short);
       return { skipped: true };
     } catch (err) {
       throw new Error(`Failed to log ID token: ${err.message}`);
     }
   }
-
+  /* real backend send*/
   if (!BACKEND_URL) throw new Error('VITE_BACKEND_URL not set');
   try {
     const resp = await fetch(`${BACKEND_URL.replace(/\/+$/,'')}/auth/session`, {
@@ -76,3 +76,5 @@ export default {
   getCurrentIdToken,
   sendIdTokenToBackend,
 };
+
+/* Stubbing Backend During Development to test frontend wihtout running backend */

@@ -230,3 +230,8 @@ class PropertyAnalyzer:
                 "decision": "Do Not Invest",
                 "reason": f"Cap rate of {mid_cap_rate}% is below minimum threshold of {threshold}%"
             }
+        
+        # ROI = total gain from investment - total cost of investment/ total cost of investment x 100%
+        # Cap Rate = Net Operating Income / Current Market Value x 100%
+            # Property Valuation Comes from RentCast API Estimate
+            # Five percent Cap Rate

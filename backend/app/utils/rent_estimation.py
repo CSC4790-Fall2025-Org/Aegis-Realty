@@ -20,7 +20,7 @@ class RentEstimator:
             # Calculate weight based on correlation (if available) and distance
             correlation = comp.get("correlation", 0.5)  # Default correlation
             distance = comp.get("distance", 1.0)  # Default distance in miles
-
+            
             # Weight calculation: higher correlation and lower distance = higher weight
             # Inverse distance weighting with correlation boost
             weight = correlation / max(distance, 0.1)  # Prevent division by zero
