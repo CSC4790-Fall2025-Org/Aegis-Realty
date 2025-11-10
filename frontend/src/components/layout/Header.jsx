@@ -49,7 +49,6 @@ const Header = () => {
             <AuthButtons
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
-              onDashboard={() => navigate('/dashboard')}
               onLogout={() => setShowLogoutModal(true)}
               onLogin={() => navigate('/login')}
             />

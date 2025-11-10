@@ -16,7 +16,6 @@ const App = () => {
             <Route path="/login" element={<AuthForm mode="login"/>}/>
             <Route path="/signup" element={<AuthForm mode="signup"/>}/>
             <Route path="/properties" element={<Properties/>}/>
-            <Route path="/services" element={<div>Services Page</div>} />
             <Route path="*" element={<Error/>}/>
         </Routes>
       </main>

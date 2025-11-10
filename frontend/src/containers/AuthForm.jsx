@@ -70,7 +70,7 @@ const AuthForm = ({ mode = 'login' }) => {
         toast.success('Successfully logged in!');
       }
 
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         toast.error('Invalid email or password');
@@ -115,7 +115,7 @@ const AuthForm = ({ mode = 'login' }) => {
         }
       }
 
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user') {
         toast.info('Sign-in canceled');
