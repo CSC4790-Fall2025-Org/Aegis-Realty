@@ -1,14 +1,25 @@
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx'
+import Spinner from './Spinner.jsx'
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
+  const location = useLocation();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div>
+      <Spinner/>
+    </div>
+  );
 
   if (!currentUser) {
-    alert("Please login before accessing this page");
-    return <Navigate to="/login"/>;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location, message: 'Please login before accessing this page' }}
+        replace
+      />
+    );
   }
 
   return children;
