@@ -6,7 +6,6 @@ const Toast = ({ id, message, type = 'info', onClose, duration = 3000 }) => {
   const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
-    // Start progress bar countdown
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev <= 0) {
