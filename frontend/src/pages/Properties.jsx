@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useInfiniteProperties } from '../hooks/usePropertyQueries.js';
+import { getPropertyImage } from '../utils/imageHelper';
 
 const PropertyCard = ({ property }) => {
   const formatPrice = (price) => {
@@ -19,6 +20,12 @@ const PropertyCard = ({ property }) => {
 
   return (
     <div className="bg-background rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+      <img
+        src={getPropertyImage(property)}
+        alt={formatAddress(property)}
+        className="w-full h-48 object-cover"
+      />
+
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold text-text truncate">
