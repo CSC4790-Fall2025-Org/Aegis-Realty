@@ -22,7 +22,7 @@ const PropertyCard = ({ property }) => {
     <div className="bg-background rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
       <img
         src={getPropertyImage(property)}
-        alt={formatAddress(property)}
+        alt="property image"
         className="w-full h-48 object-cover"
       />
 
