@@ -6,6 +6,7 @@ import Header from "./components/layout/Header.jsx";
 import Home from "./pages/Home.jsx"
 import Properties from "./pages/Properties.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Analyze from "./pages/Analyze.jsx";
 
 const App = () => {
     return (
@@ -19,6 +20,11 @@ const App = () => {
                 <Route path="/properties" element={
                     <ProtectedRoute>
                         <Properties/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/analyze" element={
+                    <ProtectedRoute>
+                        <Analyze/>
                     </ProtectedRoute>
                 }/>
                 <Route path="*" element={<Error/>}/>

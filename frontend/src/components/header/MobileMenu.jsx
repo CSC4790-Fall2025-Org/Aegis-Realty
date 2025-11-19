@@ -15,6 +15,7 @@ const MobileMenu = ({
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Properties', path: '/properties' },
+    { label: 'Analyze', path: '/analyze' },
   ];
 
   return (
