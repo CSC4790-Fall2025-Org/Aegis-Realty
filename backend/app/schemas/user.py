@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -11,11 +11,13 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     display_name: Optional[str] = None
+    favorite_properties: Optional[List[int]] = None
     is_approved: Optional[bool] = None
 
-class UserResponse(BaseModel):
+class UserResponse(UserBase):
     id: int
     firebase_id: str
+    favorite_properties: List[int] = []
     is_approved: bool
     created_at: datetime
 
