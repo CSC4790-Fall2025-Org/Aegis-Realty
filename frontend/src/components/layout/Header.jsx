@@ -46,13 +46,14 @@ const Header = () => {
           <DesktopNav onNavigate={navigate} />
 
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
             <AuthButtons
               isAuthenticated={isAuthenticated}
               currentUser={currentUser}
+              onProfile={() => navigate('/profile')}
               onLogout={() => setShowLogoutModal(true)}
               onLogin={() => navigate('/login')}
             />
-            <ThemeToggle />
           </div>
 
           <button onClick={toggleMenu} className="md:hidden text-text cursor-pointer">
@@ -65,7 +66,7 @@ const Header = () => {
           isAuthenticated={isAuthenticated}
           currentUser={currentUser}
           onNavigate={handleNavigate}
-          onDashboard={() => handleNavigate('/dashboard')}
+          onDashboard={() => handleNavigate('/profile')}
           onLogout={() => { setShowLogoutModal(true); setIsMenuOpen(false); }}
           onLogin={() => handleNavigate('/login')}
         />

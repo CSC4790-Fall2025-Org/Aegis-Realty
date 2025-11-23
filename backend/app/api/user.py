@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List
 from app.core import get_db
-from app.models import User
+from app.models import User, Property
 from app.schemas import UserCreate, UserResponse, UserUpdate
+from app.schemas.property import PropertyBase
 from app.crud import (
     create_user,
     get_user_by_id,
@@ -35,7 +36,6 @@ def create_user_route(data: UserCreate, db: Session = Depends(get_db)):
             detail="User already exists"
         )
 
-
 @router.get("/", response_model=List[UserResponse])
 def get_users_route(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = db.query(User).offset(skip).limit(limit).all()
@@ -48,7 +48,6 @@ def get_users_route(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
     return users
 
-
 @router.get("/firebase/{firebase_id}", response_model=UserResponse)
 def get_user_by_firebase_id_route(firebase_id: str, db: Session = Depends(get_db)):
     user = get_user_by_firebase_id(db, firebase_id)
@@ -60,7 +59,6 @@ def get_user_by_firebase_id_route(firebase_id: str, db: Session = Depends(get_db
         )
 
     return user
-
 
 @router.get("/{id}", response_model=UserResponse)
 def get_user_route(id: int, db: Session = Depends(get_db)):
@@ -102,45 +100,58 @@ def delete_user_route(id: int, db: Session = Depends(get_db)):
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.post("/me/favorites/{property_id}")
+@router.post("/{user_id}/favorites/{property_id}")
 def add_favorite_property(
+        user_id: int,
         property_id: int,
-        current_user: User = Depends(get_current_user),
         db: Session = Depends(get_db)
 ):
-    if not current_user.favorite_property_ids:
-        current_user.favorite_property_ids = []
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
-    if property_id in current_user.favorite_property_ids:
+    if not user.favorite_properties:
+        user.favorite_properties = []
+
+    if property_id in user.favorite_properties:
         raise HTTPException(status_code=400, detail="Property already in favorites")
 
-    current_user.favorite_property_ids = current_user.favorite_property_ids + [property_id]
+    user.favorite_properties = user.favorite_properties + [property_id]
     db.commit()
+    db.refresh(user)
     return {"message": "Property added to favorites"}
 
-@router.delete("/favorites/{property_id}")
+@router.delete("/{user_id}/favorites/{property_id}")
 def remove_favorite_property(
+        user_id: int,
         property_id: int,
-        current_user: User = Depends(get_current_user),
         db: Session = Depends(get_db)
 ):
-    if not current_user.favorite_property_ids or property_id not in current_user.favorite_property_ids:
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.favorite_properties or property_id not in user.favorite_properties:
         raise HTTPException(status_code=404, detail="Property not in favorites")
 
-    current_user.favorite_property_ids = [id for id in current_user.favorite_property_ids if id != property_id]
+    user.favorite_properties = [id for id in user.favorite_properties if id != property_id]
     db.commit()
+    db.refresh(user)
     return {"message": "Property removed from favorites"}
 
-
-@router.get("/favorites/properties")
+@router.get("/{user_id}/favorites")
 def get_favorite_properties(
-        current_user: User = Depends(get_current_user),
+        user_id: int,
         db: Session = Depends(get_db)
 ):
-    if not current_user.favorite_property_ids:
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.favorite_properties:
         return []
 
     properties = db.query(Property).filter(
-        Property.id.in_(current_user.favorite_property_ids)
+        Property.id.in_(user.favorite_properties)
     ).all()
     return [PropertyBase.model_validate(p) for p in properties]

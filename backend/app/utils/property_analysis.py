@@ -209,7 +209,7 @@ class PropertyAnalyzer:
 
         if "error" in cap_rates:
             return {
-                "decision": "Cannot Analyze",
+                "decision": "Cannot Analysis",
                 "reason": "Insufficient data for analysis"
             }
 

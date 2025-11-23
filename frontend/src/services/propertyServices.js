@@ -51,6 +51,19 @@ export async function analyzeProperty(propertyId, analysisData) {
   return response.data;
 }
 
+export async function analyzeByAddress({ street, city, state, zip, overrides, monthlyRent } = {}) {
+  const payload = { street, city, state, zip };
+  if (overrides && Object.keys(overrides).length > 0) {
+    payload.overrides = overrides;
+  }
+  if (monthlyRent !== undefined && monthlyRent !== null && monthlyRent !== '') {
+    const num = Number(monthlyRent);
+    if (!Number.isNaN(num)) payload.monthlyRent = num;
+  }
+  const response = await apiClient.post(`/api/properties/analyze-by-address`, payload);
+  return response.data;
+}
+
 // Keep the old object export for backward compatibility if needed
 export const propertyService = {
   getProperties,
@@ -58,5 +71,6 @@ export const propertyService = {
   createProperty,
   updateProperty,
   deleteProperty,
-  analyzeProperty
+  analyzeProperty,
+  analyzeByAddress
 };

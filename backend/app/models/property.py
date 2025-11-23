@@ -39,5 +39,3 @@ class Property(Base):
     tax_assessments = Column(JSON, nullable=True)
     property_taxes = Column(JSON, nullable=True)
     sale_history = Column(JSON, nullable=True)
-
-

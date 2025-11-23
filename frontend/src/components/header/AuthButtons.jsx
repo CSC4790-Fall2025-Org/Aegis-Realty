@@ -1,26 +1,15 @@
-import { FiLogIn, FiLogOut } from 'react-icons/fi';
+import { FiLogIn } from 'react-icons/fi';
+import UserMenu from './UserMenu';
 
-const AuthButtons = ({ isAuthenticated, onLogout, onLogin }) => {
+const AuthButtons = ({ isAuthenticated, currentUser, onLogout, onLogin, onProfile }) => {
   if (isAuthenticated) {
-    return (
-      <div className="flex items-center space-x-3">
-        <button
-          onClick={onLogout}
-          className="flex items-center space-x-2 bg-primary text-text px-4 py-2 rounded-md
-          hover:bg-primary/70 transition-colors cursor-pointer"
-        >
-          <FiLogOut size={20} />
-          <span>Logout</span>
-        </button>
-      </div>
-    );
+    return <UserMenu currentUser={currentUser} onProfile={onProfile} onLogout={onLogout} />;
   }
 
   return (
     <button
       onClick={onLogin}
-      className="flex items-center space-x-2 bg-primary text-text px-4 py-2 rounded-md
-      hover:bg-primary/70 transition-colors cursor-pointer"
+      className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors cursor-pointer"
     >
       <FiLogIn size={20} />
       <span>Login</span>

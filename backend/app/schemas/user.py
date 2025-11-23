@@ -17,7 +17,7 @@ class UserUpdate(BaseModel):
 class UserResponse(UserBase):
     id: int
     firebase_id: str
-    favorite_properties: List[int] = []
+    favorite_properties: Optional[List[int]] = None
     is_approved: bool
     created_at: datetime
 

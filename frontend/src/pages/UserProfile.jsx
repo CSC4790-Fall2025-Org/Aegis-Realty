@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import api from '../services/api';
+import { useUserById } from '../hooks/useUserQueries.js'
 import { getPropertyImage } from '../utils/imageHelper';
 
 const UserProfile = () => {

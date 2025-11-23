@@ -111,7 +111,6 @@ class PropertyAnalysisRequest(BaseModel):
     custom_expenses: Optional[Dict[str, Any]] = None
     cap_rate_threshold: Optional[float] = 8.0
 
-
 class PropertyAnalysisResponse(BaseModel):
     property_data: Optional[PropertyBase]
     financial_analysis: Optional[Dict[str, Any]]

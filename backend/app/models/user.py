@@ -10,6 +10,6 @@ class User(Base):
     firebase_id = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     display_name = Column(String, nullable=True)
-    favorite_properties = Column(ARRAY(Integer), default=list)
+    favorite_properties = Column(ARRAY(Integer), default=list, nullable=True)
     is_approved = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)

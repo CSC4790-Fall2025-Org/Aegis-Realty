@@ -4,8 +4,10 @@ import Error from "./pages/Error.jsx"
 import Footer from "./components/layout/Footer.jsx";
 import Header from "./components/layout/Header.jsx";
 import Home from "./pages/Home.jsx"
+import Analysis from "./pages/Analysis.jsx";
 import Properties from "./pages/Properties.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import UserProfile from "./pages/UserProfile.jsx"
 
 const App = () => {
     return (
@@ -20,6 +22,16 @@ const App = () => {
                     <ProtectedRoute>
                         <Properties/>
                     </ProtectedRoute>
+                }/>
+                <Route path="/analysis" element={
+                    <ProtectedRoute>
+                        <Analysis/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <UserProfile/>
+                  </ProtectedRoute>
                 }/>
                 <Route path="*" element={<Error/>}/>
             </Routes>
