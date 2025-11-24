@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { analyzeByAddress } from '../services/propertyServices.js';
+import { FiAlertCircle } from 'react-icons/fi';
 import Spinner from '../components/Spinner.jsx';
 
 const Field = ({ label, value, onChange, placeholder, name }) => (
@@ -149,7 +150,25 @@ const Analysis = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-2xl font-bold mb-4">Analyze Property Investment</h1>
+      <h1 className="text-2xl font-bold text-text mb-4">Analyze Property Investment</h1>
+
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6 flex gap-3">
+        <FiAlertCircle className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" size={20} />
+        <div className="text-sm text-amber-800 dark:text-amber-200">
+          <strong>Disclaimer:</strong> This analysis is AI-generated using data from{' '}
+          <a
+            href="https://app.rentcast.io/app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-amber-900 dark:hover:text-amber-100"
+          >
+            RentCast API
+          </a>
+          . Results should be taken with a grain of salt and used as a starting point only.
+          Always conduct your own research and consult with qualified professionals before making any investment decisions
+        </div>
+      </div>
+
       <form onSubmit={onSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white dark:bg-secondary p-4 rounded shadow">
         <Field label="Street" name="street" value={street} onChange={setStreet} placeholder="123 Main St" />
         <Field label="City" name="city" value={city} onChange={setCity} placeholder="Anytown" />
@@ -224,7 +243,7 @@ const Analysis = () => {
         <div className="sm:col-span-2 flex items-center gap-3 mt-2">
           <button
             type="submit"
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 disabled:opacity-60"
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 disabled:opacity-60 cursor-pointer"
             disabled={loading}
           >
             {loading ? <span className="inline-flex items-center gap-2"><Spinner size={18}/> Analyzing...</span> : 'Analysis'}
