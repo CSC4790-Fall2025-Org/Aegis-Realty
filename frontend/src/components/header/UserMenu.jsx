@@ -20,10 +20,10 @@ const UserMenu = ({ currentUser, onProfile, onLogout }) => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-background transition-colors cursor-pointer"
+        className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-background/40 transition-colors cursor-pointer"
       >
         <FiUser size={20} className="text-text" />
-        <span className="text-text">{currentUser?.displayName || currentUser?.email}</span>
+        <span className="text-text">{currentUser?.display_name || currentUser?.email}</span>
         <FiChevronDown size={16} className={`text-text transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -34,7 +34,7 @@ const UserMenu = ({ currentUser, onProfile, onLogout }) => {
               onProfile();
               setIsOpen(false);
             }}
-            className="flex items-center space-x-2 w-full px-4 py-2 text-text hover:bg-background transition-colors cursor-pointer"
+            className="flex items-center space-x-2 w-full px-4 py-2 text-text hover:bg-background/40 transition-colors cursor-pointer"
           >
             <FiUser size={18} />
             <span>Profile</span>
@@ -44,7 +44,7 @@ const UserMenu = ({ currentUser, onProfile, onLogout }) => {
               onLogout();
               setIsOpen(false);
             }}
-            className="flex items-center space-x-2 w-full px-4 py-2 text-text hover:bg-background transition-colors cursor-pointer"
+            className="flex items-center space-x-2 w-full px-4 py-2 text-text hover:bg-background/40 transition-colors cursor-pointer"
           >
             <FiLogOut size={18} />
             <span>Logout</span>

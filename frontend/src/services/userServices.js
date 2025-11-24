@@ -31,3 +31,18 @@ export async function deleteUser(id) {
   const response = await axios.delete(`${BASE_URL}/api/users/${id}`);
   return response.data;
 }
+
+export async function addFavoriteProperty(userId, propertyId) {
+  const response = await axios.post(`${BASE_URL}/api/users/${userId}/favorites/${propertyId}`);
+  return response.data;
+}
+
+export async function getFavoriteProperties(userId) {
+  const response = await axios.get(`${BASE_URL}/api/users/${userId}/favorites`);
+  return response.data;
+}
+
+export async function removeFavoriteProperty(userId, propertyId) {
+  const response = await axios.delete(`${BASE_URL}/api/users/${userId}/favorites/${propertyId}`);
+  return response.data;
+}

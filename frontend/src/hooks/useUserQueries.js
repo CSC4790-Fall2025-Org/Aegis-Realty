@@ -56,10 +56,6 @@ export function useUpdateUser(options = {}) {
       queryClient.invalidateQueries({ queryKey: ['user', 'firebase', data.firebase_id] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
 
-      // If the user belongs to a company, invalidate company users
-      if (data.company_id) {
-        queryClient.invalidateQueries({ queryKey: ['company', data.company_id, 'users'] });
-      }
 
       if (options.onSuccess) {
         options.onSuccess(data);
@@ -75,11 +71,9 @@ export function useDeleteUser(options = {}) {
   return useMutation({
     mutationFn: (id) => userServices.deleteUser(id),
     onSuccess: (data, variables) => {
-      // Variables is the id we passed to the mutation
       queryClient.invalidateQueries({ queryKey: ['users'] });
       queryClient.removeQueries({ queryKey: ['user', variables] });
 
-      // If we know the firebase_id and company_id, we could invalidate those too
       if (data.firebase_id) {
         queryClient.removeQueries({ queryKey: ['user', 'firebase', data.firebase_id] });
       }
@@ -87,6 +81,51 @@ export function useDeleteUser(options = {}) {
       if (data.company_id) {
         queryClient.invalidateQueries({ queryKey: ['company', data.company_id, 'users'] });
       }
+
+      if (options.onSuccess) {
+        options.onSuccess(data);
+      }
+    },
+    ...options,
+  });
+}
+
+export function useAddFavorite(options = {}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, propertyId }) => userServices.addFavoriteProperty(userId, propertyId),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['user', variables.userId, 'favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['user', 'firebase', data.firebase_id] });
+
+      if (options.onSuccess) {
+        options.onSuccess(data);
+      }
+    },
+    ...options,
+  });
+}
+
+export function useFavoriteProperties(userId, options = {}) {
+  return useQuery({
+    queryKey: ['user', userId, 'favorites'],
+    queryFn: () => userServices.getFavoriteProperties(userId),
+    enabled: !!userId,
+    ...options,
+  });
+}
+
+export function useRemoveFavorite(options = {}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({userId, propertyId}) => userServices.removeFavoriteProperty(userId, propertyId),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({queryKey: ['user', variables.userId, 'favorites']});
+      queryClient.invalidateQueries({queryKey: ['user', variables.userId]});
+      queryClient.invalidateQueries({queryKey: ['user', 'firebase', data.firebase_id]});
 
       if (options.onSuccess) {
         options.onSuccess(data);

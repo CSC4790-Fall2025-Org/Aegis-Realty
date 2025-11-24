@@ -1,47 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { FiEdit2, FiSave, FiX, FiHeart, FiMail, FiUser } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import { useUserById } from '../hooks/useUserQueries.js'
+import {
+  useUpdateUser,
+  useFavoriteProperties,
+  useRemoveFavorite
+} from '../hooks/useUserQueries';
 import { getPropertyImage } from '../utils/imageHelper';
 
 const UserProfile = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, updateUserData } = useAuth();
   const toast = useToast();
   const [displayName, setDisplayName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [favoriteProperties, setFavoriteProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const userData = currentUser;
 
-  const fetchUserData = async () => {
-    try {
-      const [favIds, userRes] = await Promise.all([
-        api.get('/favorites/'),
-        api.get('/users/me')
-      ]);
-
-      setDisplayName(userRes.data.display_name || '');
-
-      if (favIds.data.length > 0) {
-        const propsRes = await api.get('/properties/', {
-          params: { ids: favIds.data.join(',') }
-        });
-        setFavoriteProperties(propsRes.data);
-      }
-    } catch (error) {
-      toast.error('Failed to load profile data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: favoriteProperties = [], isLoading: favoritesLoading } = useFavoriteProperties(userData?.id);
+  const updateUserMutation = useUpdateUser();
+  const removeFavoriteMutation = useRemoveFavorite();
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+
+    if (!userData?.id) {
+      toast.error('Profile not found');
+      return;
+    }
+
     try {
-      await api.put('/users/me', { display_name: displayName });
+      await updateUserMutation.mutateAsync({
+        id: userData.id,
+        userData: { display_name: displayName }
+      });
+      updateUserData();
       toast.success('Profile updated successfully');
       setIsEditing(false);
     } catch (error) {
@@ -49,68 +42,176 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <div className="container mx-auto px-4 py-8">Loading...</div>;
+  const handleRemoveFavorite = async (propertyId) => {
+    if (!userData?.id) {
+      toast.error('Profile not found');
+      return;
+    }
+
+    try {
+      await removeFavoriteMutation.mutateAsync({
+        userId: userData.id,
+        propertyId
+      });
+      updateUserData();
+      toast.success('Property removed from favorites');
+    } catch (error) {
+      toast.error('Failed to remove favorite');
+    }
+  };
+
+  const startEditing = () => {
+    setDisplayName(userData?.display_name ?? currentUser?.firebaseUser?.displayName ?? '');
+    setIsEditing(true);
+  };
+
+  if (!userData?.id) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="bg-background rounded-lg shadow-lg p-8 text-center">
+          <FiUser size={48} className="text-text opacity-30 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-text mb-2">Profile Not Found</h2>
+          <p className="text-text opacity-70">Please contact support to set up your account.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-text mb-8">User Profile</h1>
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <h1 className="text-4xl font-bold text-text mb-8">My Profile</h1>
 
-      <div className="bg-background rounded-lg shadow-md p-6 mb-8">
+      <div className="bg-background rounded-lg shadow-lg p-8 mb-8">
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="bg-primary rounded-full p-4">
+              <FiUser size={32} className="text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-text">
+                {userData.display_name || currentUser?.firebaseUser?.displayName || 'User'}
+              </h2>
+              <p className="text-text opacity-70">{userData.email || currentUser?.firebaseUser?.email || 'No email'}</p>
+            </div>
+          </div>
+          {!isEditing && (
+            <button
+              onClick={startEditing}
+              className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors cursor-pointer"
+            >
+              <FiEdit2 size={18} />
+              <span>Edit Profile</span>
+            </button>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-text font-medium mb-2">Email</label>
-            <p className="text-text">{currentUser?.email}</p>
+          <div className="space-y-4">
+            <div>
+              <label className="flex items-center space-x-2 text-text font-medium mb-2">
+                <FiMail size={18} />
+                <span>Email Address</span>
+              </label>
+              <p className="text-text bg-secondary px-4 py-3 rounded-md">{userData.email || 'Not available'}</p>
+            </div>
+
+            <div>
+              <label className="flex items-center space-x-2 text-text font-medium mb-2">
+                <FiUser size={18} />
+                <span>Display Name</span>
+              </label>
+              {isEditing ? (
+                <form onSubmit={handleUpdateProfile} className="space-y-3">
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="Enter display name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <div className="flex space-x-2">
+                    <button
+                      type="submit"
+                      disabled={updateUserMutation.isLoading}
+                      className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 disabled:opacity-50 cursor-pointer"
+                    >
+                      <FiSave size={18} />
+                      <span>{updateUserMutation.isLoading ? 'Saving...' : 'Save'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="flex items-center space-x-2 bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-opacity-90 cursor-pointer"
+                    >
+                      <FiX size={18} />
+                      <span>Cancel</span>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <p className="text-text bg-secondary px-4 py-3 rounded-md">
+                  {userData.display_name || currentUser?.firebaseUser?.displayName || 'Not set'}
+                </p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className="block text-text font-medium mb-2">Display Name</label>
-            {isEditing ? (
-              <form onSubmit={handleUpdateProfile} className="flex gap-2">
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-md"
-                />
-                <button type="submit" className="bg-primary text-white px-4 py-2 rounded-md">
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-md"
-                >
-                  Cancel
-                </button>
-              </form>
-            ) : (
-              <div className="flex items-center gap-2">
-                <p className="text-text">{displayName || 'Not set'}</p>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="text-primary hover:underline"
-                >
-                  Edit
-                </button>
-              </div>
-            )}
+          <div className="space-y-4">
+            <div>
+              <label className="flex items-center space-x-2 text-text font-medium mb-2">
+                <FiHeart size={18} />
+                <span>Favorite Properties</span>
+              </label>
+              <p className="text-text bg-secondary px-4 py-3 rounded-md">
+                {favoriteProperties.length} {favoriteProperties.length === 1 ? 'property' : 'properties'}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-text mb-4">Favorite Properties</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {favoriteProperties.map((property) => (
-          <div key={property.id} className="bg-background rounded-lg shadow-md overflow-hidden">
-            <img src={getPropertyImage(property)} alt="property" className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <h3 className="text-text font-semibold">{property.formattedAddress}</h3>
-              <p className="text-text">${property.lastSalePrice?.toLocaleString()}</p>
-            </div>
+      <div className="bg-background rounded-lg shadow-lg p-8">
+        <h2 className="text-2xl font-bold text-text mb-6 flex items-center space-x-2">
+          <FiHeart size={24} />
+          <span>Favorite Properties</span>
+        </h2>
+
+        {favoritesLoading ? (
+          <div className="text-center text-text py-8">Loading favorites...</div>
+        ) : favoriteProperties.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {favoriteProperties.map((property) => (
+              <div key={property.id} className="bg-secondary rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                <img
+                  src={getPropertyImage(property)}
+                  alt="property"
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-text font-semibold mb-2 truncate">
+                    {property.formattedAddress}
+                  </h3>
+                  <p className="text-text text-lg font-bold mb-4">
+                    ${property.lastSalePrice?.toLocaleString() || 'N/A'}
+                  </p>
+                  <button
+                    onClick={() => handleRemoveFavorite(property.id)}
+                    disabled={removeFavoriteMutation.isLoading}
+                    className="w-full flex items-center justify-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 transition-colors cursor-pointer"
+                  >
+                    <FiX size={18} />
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-        {favoriteProperties.length === 0 && (
-          <p className="text-text col-span-full">No favorite properties yet.</p>
+        ) : (
+          <div className="text-center py-12">
+            <FiHeart size={48} className="text-text opacity-30 mx-auto mb-4" />
+            <p className="text-text text-lg">No favorite properties yet</p>
+            <p className="text-text opacity-70 mt-2">Browse properties to add them to your favorites!</p>
+          </div>
         )}
       </div>
     </div>

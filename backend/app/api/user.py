@@ -110,6 +110,10 @@ def add_favorite_property(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    property_exists = db.query(Property).filter(Property.id == property_id).first()
+    if not property_exists:
+        raise HTTPException(status_code=404, detail="Property not found")
+
     if not user.favorite_properties:
         user.favorite_properties = []
 
@@ -119,7 +123,24 @@ def add_favorite_property(
     user.favorite_properties = user.favorite_properties + [property_id]
     db.commit()
     db.refresh(user)
-    return {"message": "Property added to favorites"}
+    return UserResponse.model_validate(user)
+
+@router.get("/{user_id}/favorites", response_model=List[PropertyBase])
+def get_favorite_properties(
+        user_id: int,
+        db: Session = Depends(get_db)
+):
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.favorite_properties:
+        return []
+
+    properties = db.query(Property).filter(
+        Property.id.in_(user.favorite_properties)
+    ).all()
+    return [PropertyBase.model_validate(p) for p in properties]
 
 @router.delete("/{user_id}/favorites/{property_id}")
 def remove_favorite_property(
@@ -137,21 +158,4 @@ def remove_favorite_property(
     user.favorite_properties = [id for id in user.favorite_properties if id != property_id]
     db.commit()
     db.refresh(user)
-    return {"message": "Property removed from favorites"}
-
-@router.get("/{user_id}/favorites")
-def get_favorite_properties(
-        user_id: int,
-        db: Session = Depends(get_db)
-):
-    user = get_user_by_id(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if not user.favorite_properties:
-        return []
-
-    properties = db.query(Property).filter(
-        Property.id.in_(user.favorite_properties)
-    ).all()
-    return [PropertyBase.model_validate(p) for p in properties]
+    return UserResponse.model_validate(user)
