@@ -3,6 +3,8 @@ import { FiFilter, FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { useInfiniteProperties } from '../hooks/usePropertyQueries.js';
 import { getPropertyImage } from '../utils/imageHelper';
 import { useAuth } from '../contexts/AuthContext';
+import { useAddFavorite, useRemoveFavorite } from '../hooks/useUserQueries.js';
+import { useToast } from '../contexts/ToastContext.jsx';
 
 const FilterPanel = ({ filters, setFilters, onClear }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -155,7 +157,7 @@ const FilterPanel = ({ filters, setFilters, onClear }) => {
   );
 };
 
-const PropertyCard = ({ property }) => {
+const PropertyCard = ({ property, isFavorited, onToggleFavorite, isToggling }) => {
   const formatPrice = (price) => {
     if (!price) return 'N/A';
     return new Intl.NumberFormat('en-US', {
@@ -173,11 +175,22 @@ const PropertyCard = ({ property }) => {
 
   return (
     <div className="bg-background rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-      <img
-        src={getPropertyImage(property)}
-        alt="property image"
-        className="w-full h-48 object-cover"
-      />
+      <div className="relative">
+        <img
+          src={getPropertyImage(property)}
+          alt="property image"
+          className="w-full h-48 object-cover"
+        />
+        <button
+          onClick={() => onToggleFavorite(property)}
+          disabled={isToggling}
+          className={`absolute top-3 right-3 rounded-full p-2 shadow-md focus:outline-none ${isFavorited ? 'bg-red-500 text-white' : 'bg-white text-text'} cursor-pointer`}
+          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          {isFavorited ? '♥' : '♡'}
+        </button>
+      </div>
 
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
@@ -216,9 +229,14 @@ const PropertyCard = ({ property }) => {
           </div>
         )}
 
-        <button className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/70 transition-colors duration-200 cursor-pointer">
-          View Details
-        </button>
+        <div className="flex gap-2">
+          <a
+            href={`/properties/${property.id}`}
+            className="flex-1 bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/70 transition-colors duration-200 text-center"
+          >
+            View Details
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -226,6 +244,7 @@ const PropertyCard = ({ property }) => {
 
 const Properties = () => {
   const { currentUser } = useAuth();
+  const toast = useToast();
   const [filters, setFilters] = useState({
     minBedrooms: '',
     minBathrooms: '',
@@ -239,6 +258,21 @@ const Properties = () => {
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useInfiniteProperties();
+  const addFavorite = useAddFavorite({
+    onSuccess: () => {
+      toast.success('Added to favorites');
+      // Refresh user data so favorite IDs update immediately
+      updateUserData();
+    },
+    onError: (e) => toast.error(e?.response?.data?.detail || 'Failed to add favorite')
+  });
+  const removeFavorite = useRemoveFavorite({
+    onSuccess: () => {
+      toast.info('Removed from favorites');
+      updateUserData();
+    },
+    onError: (e) => toast.error(e?.response?.data?.detail || 'Failed to remove favorite')
+  });
 
   const allProperties = data?.pages?.flat() || [];
 
@@ -283,6 +317,19 @@ const Properties = () => {
 
     return result;
   }, [allProperties, filters, currentUser?.favorite_properties]);
+  const favIds = new Set(currentUser?.favorite_properties || []);
+  const onToggleFavorite = (property) => {
+    const userId = currentUser?.id;
+    if (!userId) {
+      // Silently ignore when not signed in (no toast)
+      return;
+    }
+    if (favIds.has(property.id)) {
+      removeFavorite.mutate({ userId, propertyId: property.id });
+    } else {
+      addFavorite.mutate({ userId, propertyId: property.id });
+    }
+  };
 
   const handleClearFilters = () => {
     setFilters({
@@ -328,7 +375,13 @@ const Properties = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {filteredAndSortedProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard
+            key={property.id}
+            property={property}
+            isFavorited={favIds.has(property.id)}
+            onToggleFavorite={onToggleFavorite}
+            isToggling={addFavorite.isPending || removeFavorite.isPending}
+          />
         ))}
       </div>
 

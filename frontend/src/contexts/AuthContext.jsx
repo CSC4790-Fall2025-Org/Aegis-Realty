@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../services/firebase';
-import { useUserByFirebaseId } from '../hooks/useUserQueries.js'
+import { useUserByFirebaseId, useCreateUser } from '../hooks/useUserQueries.js'
 import { useToast } from './ToastContext';
 
 export const AuthContext = createContext(null);
@@ -19,7 +19,28 @@ export const AuthProvider = ({ children }) => {
   } = useUserByFirebaseId(firebaseUser?.uid, {
     enabled: !!firebaseUser?.uid,
     onError: (error) => {
-      toast.error(`Error fetching user data: ${error.message}`);
+      // If user not found, auto-provision in backend
+      if (error?.response?.status === 404 && firebaseUser) {
+        const displayName = firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '';
+        createUserMutation.mutate({
+          firebase_id: firebaseUser.uid,
+          email: firebaseUser.email,
+          display_name: displayName,
+        });
+      } else {
+        toast.error(`Error fetching user data: ${error.message}`);
+      }
+    }
+  });
+
+  const createUserMutation = useCreateUser({
+    onSuccess: () => {
+      toast.success('Account initialized');
+      // Refresh to pull favorites and other server fields
+      refetchUser();
+    },
+    onError: (e) => {
+      toast.error(e?.response?.data?.detail || 'Failed to initialize account');
     }
   });
 
