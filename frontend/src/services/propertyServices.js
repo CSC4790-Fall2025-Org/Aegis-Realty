@@ -64,6 +64,14 @@ export async function analyzeByAddress({ street, city, state, zip, overrides, mo
   return response.data;
 }
 
+export async function searchPropertiesByAddress(address, limit = 8) {
+  const params = new URLSearchParams();
+  params.append('address', address);
+  params.append('limit', limit.toString());
+  const response = await apiClient.get(`/api/properties/search?${params.toString()}`);
+  return response.data;
+}
+
 // Keep the old object export for backward compatibility if needed
 export const propertyService = {
   getProperties,
@@ -72,5 +80,6 @@ export const propertyService = {
   updateProperty,
   deleteProperty,
   analyzeProperty,
-  analyzeByAddress
+  analyzeByAddress,
+  searchPropertiesByAddress
 };
