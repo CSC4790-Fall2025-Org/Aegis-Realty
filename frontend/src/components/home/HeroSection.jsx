@@ -72,11 +72,10 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <div ref={containerRef} className="bg-background backdrop-blur-sm rounded-lg shadow-lg p-6 max-w-md mx-auto">
+          <div ref={containerRef} className="bg-background backdrop-blur-sm rounded-3xl shadow-lg p-6 max-w-md mx-auto">
             <h3 className="text-lg font-semibold text-text mb-4">Start Your Analysis</h3>
             <div className="relative">
               <div className="flex items-center gap-2">
-                <FiSearch className="text-text/60" />
                 <input
                   type="text"
                   placeholder="Enter property address..."

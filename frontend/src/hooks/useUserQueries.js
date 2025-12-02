@@ -51,7 +51,6 @@ export function useUpdateUser(options = {}) {
   return useMutation({
     mutationFn: ({ id, userData }) => userServices.updateUser(id, userData),
     onSuccess: (data) => {
-      // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ['user', data.id] });
       queryClient.invalidateQueries({ queryKey: ['user', 'firebase', data.firebase_id] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -95,14 +94,44 @@ export function useAddFavorite(options = {}) {
 
   return useMutation({
     mutationFn: ({ userId, propertyId }) => userServices.addFavoriteProperty(userId, propertyId),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['user', variables.userId, 'favorites'] });
-      queryClient.invalidateQueries({ queryKey: ['user', variables.userId] });
-      queryClient.invalidateQueries({ queryKey: ['user', 'firebase', data.firebase_id] });
+    onMutate: async ({ propertyId }) => {
+      await queryClient.cancelQueries({ queryKey: ['user'] });
 
-      if (options.onSuccess) {
-        options.onSuccess(data);
-      }
+      queryClient.setQueriesData({ queryKey: ['user'] }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          favorite_properties: [...(old.favorite_properties || []), propertyId]
+        };
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      options.onSuccess?.(data);
+    },
+    ...options,
+  });
+}
+
+export function useRemoveFavorite(options = {}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({userId, propertyId}) => userServices.removeFavoriteProperty(userId, propertyId),
+    onMutate: async ({ propertyId }) => {
+      await queryClient.cancelQueries({ queryKey: ['user'] });
+
+      queryClient.setQueriesData({ queryKey: ['user'] }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          favorite_properties: (old.favorite_properties || []).filter(id => id !== propertyId)
+        };
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      options.onSuccess?.(data);
     },
     ...options,
   });
@@ -113,24 +142,6 @@ export function useFavoriteProperties(userId, options = {}) {
     queryKey: ['user', userId, 'favorites'],
     queryFn: () => userServices.getFavoriteProperties(userId),
     enabled: !!userId,
-    ...options,
-  });
-}
-
-export function useRemoveFavorite(options = {}) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({userId, propertyId}) => userServices.removeFavoriteProperty(userId, propertyId),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({queryKey: ['user', variables.userId, 'favorites']});
-      queryClient.invalidateQueries({queryKey: ['user', variables.userId]});
-      queryClient.invalidateQueries({queryKey: ['user', 'firebase', data.firebase_id]});
-
-      if (options.onSuccess) {
-        options.onSuccess(data);
-      }
-    },
     ...options,
   });
 }

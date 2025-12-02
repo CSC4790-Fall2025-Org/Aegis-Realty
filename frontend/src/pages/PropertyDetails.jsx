@@ -94,11 +94,6 @@ const PropertyDetails = () => {
         </Section>
       </div>
 
-      {/* Raw JSON (collapsible) */}
-      <details className="mt-8 bg-background rounded-lg shadow-sm border border-border/30">
-        <summary className="cursor-pointer select-none px-6 py-3 text-sm text-text/70 hover:text-text">Developer Data</summary>
-        <pre className="px-6 pb-6 text-xs overflow-auto max-h-80 whitespace-pre-wrap text-text/80">{JSON.stringify(property, null, 2)}</pre>
-      </details>
     </div>
   );
 };

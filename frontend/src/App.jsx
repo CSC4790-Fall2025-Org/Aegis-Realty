@@ -18,7 +18,7 @@ const App = () => {
         <Header/>
         <main className="flex-1">
             <Routes>
-                <Route path="/" element={isAuthenticated ? <Home/> : <AuthForm mode="login"/>} />
+                <Route path="/" element={<Home/>}/>
                 <Route path="/login" element={<AuthForm mode="login"/>}/>
                 <Route path="/signup" element={<AuthForm mode="signup"/>}/>
                 <Route path="/properties" element={

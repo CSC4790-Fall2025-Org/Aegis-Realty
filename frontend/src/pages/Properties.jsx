@@ -258,23 +258,40 @@ const Properties = () => {
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useInfiniteProperties();
+
   const addFavorite = useAddFavorite({
     onSuccess: () => {
       toast.success('Added to favorites');
-      // Refresh user data so favorite IDs update immediately
-      updateUserData();
     },
     onError: (e) => toast.error(e?.response?.data?.detail || 'Failed to add favorite')
   });
+
   const removeFavorite = useRemoveFavorite({
     onSuccess: () => {
       toast.info('Removed from favorites');
-      updateUserData();
     },
     onError: (e) => toast.error(e?.response?.data?.detail || 'Failed to remove favorite')
   });
 
   const allProperties = data?.pages?.flat() || [];
+
+  const favIds = useMemo(() =>
+    new Set(currentUser?.favorite_properties || []),
+    [currentUser?.favorite_properties]
+  );
+
+  const onToggleFavorite = (property) => {
+    const userId = currentUser?.id;
+    if (!userId) {
+      // Silently ignore when not signed in (no toast)
+      return;
+    }
+    if (favIds.has(property.id)) {
+      removeFavorite.mutate({ userId, propertyId: property.id });
+    } else {
+      addFavorite.mutate({ userId, propertyId: property.id });
+    }
+  };
 
   const filteredAndSortedProperties = useMemo(() => {
     let result = [...allProperties];
@@ -317,19 +334,6 @@ const Properties = () => {
 
     return result;
   }, [allProperties, filters, currentUser?.favorite_properties]);
-  const favIds = new Set(currentUser?.favorite_properties || []);
-  const onToggleFavorite = (property) => {
-    const userId = currentUser?.id;
-    if (!userId) {
-      // Silently ignore when not signed in (no toast)
-      return;
-    }
-    if (favIds.has(property.id)) {
-      removeFavorite.mutate({ userId, propertyId: property.id });
-    } else {
-      addFavorite.mutate({ userId, propertyId: property.id });
-    }
-  };
 
   const handleClearFilters = () => {
     setFilters({
