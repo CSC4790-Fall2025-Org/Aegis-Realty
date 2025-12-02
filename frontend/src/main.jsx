@@ -32,7 +32,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ThemeProvider>
         </AuthProvider>
       </ToastProvider>
-      <ReactQueryDevtools initialIsOpen={true}/>
+      {/*<ReactQueryDevtools initialIsOpen={true}/>*/}
     </QueryClientProvider>
   </React.StrictMode>
 )
