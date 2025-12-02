@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react';
 import AuthForm from './containers/AuthForm.jsx';
 import Error from "./pages/Error.jsx"
 import Footer from "./components/layout/Footer.jsx";
@@ -45,6 +46,7 @@ const App = () => {
             </Routes>
         </main>
         <Footer/>
+        <Analytics/>
         </div>
   )
 }
