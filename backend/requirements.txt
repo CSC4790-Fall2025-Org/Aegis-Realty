@@ -8,6 +8,8 @@ cffi==2.0.0
 charset-normalizer==3.4.3
 click==8.3.0
 cryptography==46.0.1
+dnspython==2.8.0
+email-validator==2.3.0
 fastapi==0.116.2
 firebase_admin==7.1.0
 google-api-core==2.25.1
